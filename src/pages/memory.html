@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Память с карточками</title>
+</head>
+<body class="memory-game">
+    <div class="memory-container">
+        <h1 class="memory-title">Игра «Память»</h1>
+        <div class="memory-info">
+            <span>Ходы: <strong id="moves">0</strong></span>
+            <span>Пары: <strong id="pairs">0</strong> / 8</span>
+            <button id="restart" class="memory-btn">Заново</button>
+        </div>
+        <div id="board" class="memory-board"></div>
+        <div id="win-message" class="memory-win hidden">
+            <p>Победа! 🎉</p>
+            <p>Ходов: <span id="final-moves">0</span></p>
+            <button id="play-again" class="memory-btn">Играть снова</button>
+        </div>
+    </div>
+</body>
+</html>

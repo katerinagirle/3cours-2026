@@ -1,0 +1,111 @@
+body.memory-game {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+  }
+  
+  .memory-container {
+    text-align: center;
+    padding: 20px;
+    max-width: 520px;
+    width: 100%;
+  }
+  
+  .memory-title {
+    font-size: 2rem;
+    margin-bottom: 16px;
+  }
+  
+  .memory-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    font-size: 1.1rem;
+  }
+  
+  .memory-btn {
+    background: #e94560;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .memory-btn:hover {
+    background: #ff6b81;
+  }
+  
+  .memory-board {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    perspective: 800px;
+  }
+  
+  .memory-card {
+    aspect-ratio: 1;
+    position: relative;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.4s ease;
+  }
+  
+  .memory-card.flipped,
+  .memory-card.matched {
+    transform: rotateY(180deg);
+  }
+  
+  .memory-card-front,
+  .memory-card-back {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    backface-visibility: hidden;
+    font-size: 2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+  
+  .memory-card-front {
+    background: #e94560;
+    color: #fff;
+    font-weight: bold;
+  }
+  
+  .memory-card-back {
+    background: #fff;
+    transform: rotateY(180deg);
+  }
+  
+  .memory-card.matched .memory-card-back {
+    background: #2ecc71;
+  }
+  
+  .memory-win {
+    margin-top: 24px;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+  }
+  
+  .memory-win p {
+    margin: 8px 0;
+    font-size: 1.3rem;
+  }
+  
+  .memory-win.hidden {
+    display: none;
+  }

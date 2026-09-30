@@ -10,6 +10,7 @@ module.exports = {
   entry: {
     index: './src/javascripts/index.js',
     rpsreact: './src/javascripts/rps-game.jsx',
+    memory: './src/javascripts/memory-game.js',
   },
   output: {
     filename: '[name].js',
