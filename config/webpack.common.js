@@ -11,6 +11,7 @@ module.exports = {
     index: './src/javascripts/index.js',
     rpsreact: './src/javascripts/rps-game.jsx',
     memory: './src/javascripts/memory-game.js',
+    memoryreact: './src/javascripts/memory-react.jsx',
   },
   output: {
     filename: '[name].js',
