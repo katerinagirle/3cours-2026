@@ -1,2 +1,2 @@
-Игра: https://katerinagirle.github.io/3cours-2026/memory.html
-Игра на ракт:
+Игра: https://katerinagirle.github.io/3cours-2026/memory.html <br>
+Игра на реакт:
