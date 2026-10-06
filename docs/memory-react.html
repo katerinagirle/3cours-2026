@@ -1,11 +1,166 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  ...
-  <script defer src="memoryreact.js"></script>
-  <link href="..." rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Память с карточками (React)</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #fff;
+    }
+    .memory-container { text-align: center; padding: 20px; max-width: 520px; width: 100%; }
+    .memory-title { font-size: 2rem; margin-bottom: 16px; }
+    .memory-info {
+      display: flex; justify-content: center; align-items: center;
+      gap: 24px; margin-bottom: 20px; flex-wrap: wrap; font-size: 1.1rem;
+    }
+    .memory-btn {
+      background: #e94560; color: #fff; border: none; border-radius: 8px;
+      padding: 8px 18px; font-size: 1rem; cursor: pointer;
+    }
+    .memory-btn:hover { background: #ff6b81; }
+    .memory-board {
+      display: grid; grid-template-columns: repeat(4, 1fr);
+      gap: 12px; perspective: 800px;
+    }
+    .memory-card {
+      aspect-ratio: 1; position: relative; cursor: pointer;
+      transform-style: preserve-3d; transition: transform 0.4s ease;
+    }
+    .memory-card.flipped, .memory-card.matched { transform: rotateY(180deg); }
+    .memory-card-front, .memory-card-back {
+      position: absolute; inset: 0; display: flex; align-items: center;
+      justify-content: center; border-radius: 12px; backface-visibility: hidden;
+      font-size: 2rem; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .memory-card-front { background: #e94560; color: #fff; font-weight: bold; }
+    .memory-card-back { background: #fff; transform: rotateY(180deg); }
+    .memory-card.matched .memory-card-back { background: #2ecc71; }
+    .memory-win {
+      margin-top: 24px; padding: 20px;
+      background: rgba(255,255,255,0.1); border-radius: 16px;
+    }
+    .memory-win p { margin: 8px 0; font-size: 1.3rem; }
+  </style>
 </head>
-<body class="memory-game">
+<body>
   <div id="app"></div>
+
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    const { useState } = React;
+    const EMOJIS = ['🍎', '🍌', '🍇', '🍉', '🍓', '🍒', '🥝', '🍑'];
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function createCards() {
+      return shuffle([...EMOJIS, ...EMOJIS]).map((emoji, index) => ({
+        id: index, emoji, flipped: false, matched: false,
+      }));
+    }
+
+    function App() {
+      const [cards, setCards] = useState(createCards);
+      const [flippedIds, setFlippedIds] = useState([]);
+      const [moves, setMoves] = useState(0);
+      const [locked, setLocked] = useState(false);
+
+      const matchedCount = cards.filter(c => c.matched).length / 2;
+      const isWin = matchedCount === EMOJIS.length;
+
+      function restart() {
+        setCards(createCards());
+        setFlippedIds([]);
+        setMoves(0);
+        setLocked(false);
+      }
+
+      function handleCardClick(id) {
+        if (locked) return;
+        const card = cards.find(c => c.id === id);
+        if (!card || card.flipped || card.matched) return;
+        if (flippedIds.length === 2) return;
+
+        const newFlipped = [...flippedIds, id];
+        setCards(prev => prev.map(c => c.id === id ? { ...c, flipped: true } : c));
+        setFlippedIds(newFlipped);
+
+        if (newFlipped.length === 2) {
+          setMoves(m => m + 1);
+          setLocked(true);
+          const [firstId, secondId] = newFlipped;
+          const first = cards.find(c => c.id === firstId);
+          const second = cards.find(c => c.id === id);
+
+          if (first && second && first.emoji === second.emoji) {
+            setCards(prev => prev.map(c =>
+              c.id === firstId || c.id === secondId
+                ? { ...c, matched: true, flipped: true } : c
+            ));
+            setFlippedIds([]);
+            setLocked(false);
+          } else {
+            setTimeout(() => {
+              setCards(prev => prev.map(c =>
+                c.id === firstId || c.id === secondId
+                  ? { ...c, flipped: false } : c
+              ));
+              setFlippedIds([]);
+              setLocked(false);
+            }, 700);
+          }
+        }
+      }
+
+      return (
+        <div className="memory-container">
+          <h1 className="memory-title">Игра «Память» (React)</h1>
+          <div className="memory-info">
+            <span>Ходы: <strong>{moves}</strong></span>
+            <span>Пары: <strong>{matchedCount}</strong> / {EMOJIS.length}</span>
+            <button className="memory-btn" onClick={restart}>Заново</button>
+          </div>
+          <div className="memory-board">
+            {cards.map(card => (
+              <div
+                key={card.id}
+                className={`memory-card${card.flipped || card.matched ? ' flipped' : ''}${card.matched ? ' matched' : ''}`}
+                onClick={() => handleCardClick(card.id)}
+              >
+                <div className="memory-card-front">?</div>
+                <div className="memory-card-back">{card.emoji}</div>
+              </div>
+            ))}
+          </div>
+          {isWin && (
+            <div className="memory-win">
+              <p>Победа! 🎉</p>
+              <p>Ходов: <span>{moves}</span></p>
+              <button className="memory-btn" onClick={restart}>Играть снова</button>
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    ReactDOM.createRoot(document.getElementById('app')).render(<App />);
+  </script>
 </body>
 </html>
